@@ -2,7 +2,7 @@ OBJ_DIR = obj
 SRC_DIR = src
 
 CXX = g++
-CXXFLAGS = -fPIC -O3 -std=c++20 -march=native -fopenmp -lm 
+CXXFLAGS = -fPIC -O3 -std=c++20 -march=native -fopenmp -lm #-fopenmp has to be commented out if you dont want openmp 
 OPEN_MP_FLAG = -DOPEN_MP #remove if you don't want to use openmp
 PDG_FLAG = -DPDG_PATH=\"$(PWD)/pdg_database/baryons_mesons.txt\"
 

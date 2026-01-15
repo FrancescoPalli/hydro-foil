@@ -10,7 +10,10 @@
 
 using namespace std;
 
-
+template <typename T>
+int sign(T x){
+  return (T(0)<x)-(x<T(0));
+}
 //computes the mean spin vector for particles emitted at midrapidity for the particle "particle" using
 //the freezeout file "freezeout_sup". For the thermal vorticity, eq. 64 of 2304.02276 is used
 //The output is written in "fileout" as a table:
@@ -20,6 +23,8 @@ void polarization_midrapidity(double pT, double phi, pdg_particle particle, vect
 
 //same as the previous function but uses the linear approximation for the vorticity induced polarization. This function is faster.
 void polarization_midrapidity_linear(double pT, double phi, pdg_particle particle, vector<element> &freeze_out_sup, ofstream &fileout);
+//same as the previous but uses the new formula (2509.14301)
+void polarization_midrapidity_linear_new(double pT, double phi, pdg_particle particle, vector<element> &freeze_out_sup, ofstream &fileout);
 
 //Same as "polarization_midrapidity", but the table now includes the rapidity "y":
 //pt phi y denominator numerator_varpi numerator_xi
