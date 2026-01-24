@@ -11,7 +11,7 @@ using namespace std;
 int main(int argc, char** argv){
 
 bool decay = false;
-
+bool iso_approx = false;
 
 if(argc<3){
     cout<< "INVALID SINTAX!"<<endl;
@@ -20,9 +20,19 @@ if(argc<3){
 }
 
 if(argc>3){
-	if(argv[3]=="-D"s){
-		decay = true;
-		cout<<"Including calculations for the feed-down corrections!"<<endl;
+	for(int i=3; i<argc; i++){
+		string flag = argv[i];
+		if(flag == "-D"){
+			decay = true;
+			cout<<"Including calculations for the feed-down corrections!"<<endl;
+		}
+		else if(flag == "-I"){
+			iso_approx = true;
+			cout<<"Using the isothermal approximation!"<<endl;
+		}
+		else {
+            cout << "Unknown flag: " << flag << endl;
+        }
 	}
 }
 
@@ -32,6 +42,10 @@ filesystem::create_directories(output_folder);
 
 vector<element> hypersup = {};
 read_hypersrface(surface_file, hypersup);
+
+if(iso_approx){
+	iso_sup(hypersup);
+}
 
 int size_pt = 20;
 int size_phi = 30;

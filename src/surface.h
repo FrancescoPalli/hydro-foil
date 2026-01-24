@@ -19,6 +19,12 @@ struct element {
 
 void read_hypersrface(std::string filename, std::vector<element> &hypersurface);
 
+// Takes a cell of the freezout hypersup and kill the partialT part of the gradients
+element iso_cell (const element& cell);
+
+// Takes the freezout hypersup and makes the gradients iso-thermal
+void iso_sup (std::vector<element>& hypersup);
+
 element new_dbeta(element surf_old, int tag);
 std::array<std::vector<element>,5> components_freeze_out(std::vector<element> &freeze_out_sup);
 

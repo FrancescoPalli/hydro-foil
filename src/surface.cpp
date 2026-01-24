@@ -64,6 +64,33 @@ void element::print(){
         cout << endl;
 }
 
+element iso_cell (const element& cell){
+
+    element cell_iso = cell;
+    std::array<double,4> u_low={0};
+
+    for(int rh=0; rh<4; rh++){
+        u_low[rh] = cell.u[rh]*gmumu[rh];
+    }
+
+    for(int mu=0; mu<4; mu++){
+        for(int nu=0; nu<4; nu++){
+            for(int al=0; al<4; al++){
+                cell_iso.dbeta[mu][nu] += cell.u[al] * cell.dbeta[mu][al] * u_low[nu];
+            }
+        }
+    }
+     
+    return cell_iso;
+}
+
+void iso_sup (vector<element>& hypersup){
+    
+    for(element& cell : hypersup){
+        cell = iso_cell(cell);
+    }
+}
+
 element new_dbeta(element surf_old, int tag){
     std::cout<<"REMEMBER: this function should only be used in the isothermal freeze-out case!"<<std::endl;
     
