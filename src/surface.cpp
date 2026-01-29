@@ -67,6 +67,7 @@ void element::print(){
 element iso_cell (const element& cell){
 
     element cell_iso = cell;
+    
     std::array<double,4> u_low={0};
 
     for(int rh=0; rh<4; rh++){
@@ -76,7 +77,7 @@ element iso_cell (const element& cell){
     for(int mu=0; mu<4; mu++){
         for(int nu=0; nu<4; nu++){
             for(int al=0; al<4; al++){
-                cell_iso.dbeta[mu][nu] +=  cell.u[al] * cell.dbeta[mu][al] * u_low[nu];
+                cell_iso.dbeta[mu][nu] -=  cell.u[al] * cell.dbeta[mu][al] * u_low[nu];
             }
         }
     }
