@@ -97,13 +97,14 @@ def Sz_pseudorapidity_polarization(polarization_file, mass=1.32171, eta_cut=1, p
     Pizu = Pizu - Pi0*(pT*np.sinh(eta))/(E+mass)
     
     pt_vals = np.unique(pT)[:, None, None]
+    eta_vals = np.unique(eta)[None, None, :]
 
     if dimeta>1:
         Pz = Pizu.reshape((dimP,dimPhi,dimeta))
         dNdP = dndp.reshape((dimP,dimPhi,dimeta))
         Pt = pT.reshape((dimP,dimPhi,dimeta))
-        mean_spin = np.trapezoid(np.trapezoid(Pz*pt_vals,x=np.unique(pT),axis=0),x=np.unique(eta),axis=1)
-        spectra = np.trapezoid(np.trapezoid(dNdP*pt_vals,x=np.unique(pT),axis=0),x=np.unique(eta),axis=1)
+        mean_spin = np.trapezoid(np.trapezoid(Pz*((pt_vals**2+mass**2)/(np.cosh(eta_vals))),x=np.unique(pT),axis=0),x=np.unique(eta),axis=1)
+        spectra = np.trapezoid(np.trapezoid(dNdP*((pt_vals**2+mass**2)/(np.cosh(eta_vals))),x=np.unique(pT),axis=0),x=np.unique(eta),axis=1)
     else:
         print("Midpseudorapidity only!")
         Pz = Pizu.reshape((dimP,dimPhi))
