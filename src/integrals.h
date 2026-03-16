@@ -36,6 +36,8 @@ std::vector<const element*> intersections_list(const element& ref_cell, const st
 //pt phi y denominator numerator_varpi numerator_xi
 void polarization_exact_rapidity(double pT, double phi, double y_rap, pdg_particle particle, vector<element> &freeze_out_sup, ofstream &fileout);
 
+//Same as "polarization_exact_rapidity", but in terms of pseudorapidity "eta":
+void polarization_exact_pseudorapidity(double pT, double phi, double eta_pseudo, pdg_particle particle, vector<element> &freeze_out_sup, ofstream &fileout);
 //auxiliary function to compute polarization for any spin
 double aux_exact_polarization(double spin, double pu, double T, double mutot, double theta_sq);
 
