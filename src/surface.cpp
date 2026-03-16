@@ -77,7 +77,7 @@ element iso_cell (const element& cell){
     for(int mu=0; mu<4; mu++){
         for(int nu=0; nu<4; nu++){
             for(int al=0; al<4; al++){
-                cell_iso.dbeta[mu][nu] -=  cell.u[al] * cell.dbeta[mu][al] * u_low[nu];
+                cell_iso.dbeta[mu][nu] += - cell.u[al] * cell.dbeta[mu][al] * u_low[nu];
             }
         }
     }
