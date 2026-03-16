@@ -215,21 +215,21 @@ void polarization_midrapidity_linear_new(double pT, double phi, pdg_particle par
 
 }
 
-bool intersection(const element& ref_cell, const element& cell, const std::array<double,4> momentum){
+//bool intersection(const element& ref_cell, const element& cell, const std::array<double,4> momentum){
+//
+//}
 
-}
-
-std::vector<const element*> intersections_list(const element& ref_cell, const std::vector<element>& hypersup, const std::array<double,4>& momentum){
-    std::vector<const element*> intersected_cells;
-
-    for(const element& cell : hypersup){
-        if(intersection(ref_cell, cell, momentum)){
-            intersected_cells.push_back(&cell);
-        }
-    }
-
-    return intersected_cells;
-}
+//std::vector<const element*> intersections_list(const element& ref_cell, const std::vector<element>& hypersup, const std::array<double,4>& momentum){
+//   std::vector<const element*> intersected_cells;
+//
+//    for(const element& cell : hypersup){
+//        if(intersection(ref_cell, cell, momentum)){
+//            intersected_cells.push_back(&cell);
+//        }
+//    }
+//
+//    return intersected_cells;
+//}
 
 void polarization_exact_rapidity(double pT, double phi, double y_rap, pdg_particle particle, vector<element> &freeze_out_sup, ofstream &fileout){
     double P_vorticity[4] = {0,0,0,0};
