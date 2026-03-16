@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-# import plot_lib as pl
 import numpy as np
 import matplotlib
 import matplotlib.patches as ptch
@@ -39,19 +38,79 @@ def Sz_rapidity_polarization(polarization_file, mass=1.115683, rap_cut=1, pt_cut
     mT = np.sqrt(mass*mass + pT*pT)
     Pizu = Pizu - Pi0*(mT*np.sinh(y_rap))/(mT*np.cosh(y_rap)+mass)
     
+    pt_vals = np.unique(pT)[:, None, None]
+
     if dimy>1:
         Pz = Pizu.reshape((dimP,dimPhi,dimy))
         dNdP = dndp.reshape((dimP,dimPhi,dimy))
         Pt = pT.reshape((dimP,dimPhi,dimy))
-        mean_spin = np.trapz(np.trapz(Pz,x=np.unique(pT),axis=0),x=np.unique(y_rap),axis=1)
-        spectra = np.trapz(np.trapz(dNdP,x=np.unique(pT),axis=0),x=np.unique(y_rap),axis=1)
+        mean_spin = np.trapezoid(np.trapezoid(Pz*pt_vals,x=np.unique(pT),axis=0),x=np.unique(y_rap),axis=1)
+        spectra = np.trapezoid(np.trapezoid(dNdP*pt_vals,x=np.unique(pT),axis=0),x=np.unique(y_rap),axis=1)
     else:
         print("Midrapidity only!")
         Pz = Pizu.reshape((dimP,dimPhi))
         dNdP = dndp.reshape((dimP,dimPhi))
         Pt = pT.reshape((dimP,dimPhi))
-        mean_spin = np.trapz(Pz,x=np.unique(pT),axis=0)
-        spectra = np.trapz(dNdP,x=np.unique(pT),axis=0)
+        mean_spin = np.trapezoid(Pz*pt_vals,x=np.unique(pT),axis=0)
+        spectra = np.trapezoid(dNdP*pt_vals,x=np.unique(pT),axis=0)
+    
+    if(global_integrals):
+        return np.unique(phi), mean_spin, spectra
+
+    pol = mean_spin/spectra
+
+    return np.unique(phi), pol
+
+def Sz_pseudorapidity_polarization(polarization_file, mass=1.32171, eta_cut=1, pt_cut=10, vorticity=False, global_integrals = False):
+    '''
+    Computes the z component of polarization as a function of phi from the particlizationCalc output.
+    If vorticity = True plots only the contribution of the vorticity
+    spin_to_polarization converts the mean spin formula to polarization. Particles are assumet to be S=1/2 by default.
+    '''
+    filename =  np.loadtxt(polarization_file, unpack=True)
+    pT = filename[0]
+    phi = filename[1]
+    eta = filename[2]
+    select = (np.abs(eta)<=eta_cut) & (pT>0.5) & (pT<pt_cut)
+    pT = pT[select]
+    phi = phi[select]
+    eta = eta[select]
+
+    dndp = filename[3]
+    dndp = dndp[select]
+    dimP=np.size(np.unique(pT))
+    dimPhi=np.size(np.unique(phi))
+    dimeta=np.size(np.unique(eta))
+    Pi0 = filename[4]
+    Pizu = filename[7]
+    if(vorticity):
+        vorticity=False
+    else:
+        Pi0 = Pi0 + filename[8]
+        Pizu = Pizu + filename[11] 
+
+    Pi0 = Pi0[select]
+    Pizu = Pizu[select]
+
+    #BACKBOOST to Xi- RF
+    E = np.sqrt(mass*mass + pT*pT * np.cosh(eta)**2)
+    Pizu = Pizu - Pi0*(pT*np.sinh(eta))/(E+mass)
+    
+    pt_vals = np.unique(pT)[:, None, None]
+
+    if dimeta>1:
+        Pz = Pizu.reshape((dimP,dimPhi,dimeta))
+        dNdP = dndp.reshape((dimP,dimPhi,dimeta))
+        Pt = pT.reshape((dimP,dimPhi,dimeta))
+        mean_spin = np.trapezoid(np.trapezoid(Pz*pt_vals,x=np.unique(pT),axis=0),x=np.unique(eta),axis=1)
+        spectra = np.trapezoid(np.trapezoid(dNdP*pt_vals,x=np.unique(pT),axis=0),x=np.unique(eta),axis=1)
+    else:
+        print("Midpseudorapidity only!")
+        Pz = Pizu.reshape((dimP,dimPhi))
+        dNdP = dndp.reshape((dimP,dimPhi))
+        Pt = pT.reshape((dimP,dimPhi))
+        mean_spin = np.trapezoid(Pz*pt_vals,x=np.unique(pT),axis=0)
+        spectra = np.trapezoid(dNdP*pt_vals,x=np.unique(pT),axis=0)
     
     if(global_integrals):
         return np.unique(phi), mean_spin, spectra
@@ -98,15 +157,15 @@ def Sz_polarization_pT(polarization_file, mass=1.115683, harmonics=2, rap_cut=1,
         Pzsin = Pizu*np.sin(harmonics*phi) 
         Pz_reahsped = Pzsin.reshape((dimP,dimPhi,dimy))
         dNdP_reshaped = dndp.reshape((dimP,dimPhi,dimy))
-        mean_spin = np.trapz(np.trapz(Pz_reahsped,x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
-        spectra = np.trapz(np.trapz(dNdP_reshaped,x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
+        mean_spin = np.trapezoid(np.trapezoid(Pz_reahsped,x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
+        spectra = np.trapezoid(np.trapezoid(dNdP_reshaped,x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
     else:
         print("Midrapidity only!")
         Pzsin = Pizu*np.sin(harmonics*phi) 
         Pz_reahsped = Pzsin.reshape((dimP,dimPhi))
         dNdP_reshaped = dndp.reshape((dimP,dimPhi))
-        mean_spin = np.trapz(Pz_reahsped,x=np.unique(phi),axis=1)
-        spectra = np.trapz(dNdP_reshaped,x=np.unique(phi),axis=1)
+        mean_spin = np.trapezoid(Pz_reahsped,x=np.unique(phi),axis=1)
+        spectra = np.trapezoid(dNdP_reshaped,x=np.unique(phi),axis=1)
     
     if(global_integrals):
         return np.unique(pT), mean_spin, spectra
@@ -150,19 +209,21 @@ def Sj_rapidity_polarization(polarization_file, mass=1.115683, rap_cut=1, pt_cut
     mT = np.sqrt(mass*mass + pT*pT)
     Piyu = Piyu - Pi0*(pT*np.sin(phi))/(mT*np.cosh(y_rap)+mass)
 
+    pt_vals = np.unique(pT)[:, None, None]
+
     if dimy>1:
         Py = Piyu.reshape((dimP,dimPhi,dimy))
         dNdP = dndp.reshape((dimP,dimPhi,dimy))
         Pt = pT.reshape((dimP,dimPhi,dimy))
-        mean_spin = np.trapz(np.trapz(Py,x=np.unique(pT),axis=0),x=np.unique(y_rap),axis=1)
-        spectra = np.trapz(np.trapz(dNdP,x=np.unique(pT),axis=0),x=np.unique(y_rap),axis=1)
+        mean_spin = np.trapezoid(np.trapezoid(Py*pt_vals,x=np.unique(pT),axis=0),x=np.unique(y_rap),axis=1)
+        spectra = np.trapezoid(np.trapezoid(dNdP*pt_vals,x=np.unique(pT),axis=0),x=np.unique(y_rap),axis=1)
     else:
         print("Midrapidity only!")
         Py = Piyu.reshape((dimP,dimPhi))
         dNdP = dndp.reshape((dimP,dimPhi))
         Pt = pT.reshape((dimP,dimPhi))
-        mean_spin = np.trapz(Py,x=np.unique(pT),axis=0)
-        spectra = np.trapz(dNdP,x=np.unique(pT),axis=0)
+        mean_spin = np.trapezoid(Py*pt_vals,x=np.unique(pT),axis=0)
+        spectra = np.trapezoid(dNdP*pt_vals,x=np.unique(pT),axis=0)
     
     if(global_integrals):
         return np.unique(phi), -mean_spin, spectra
@@ -208,15 +269,15 @@ def Sj_polarization_pT(polarization_file, mass=1.115683, harmonics=2, rap_cut=1,
     if dimy>1:
         Py = Piyu.reshape((dimP,dimPhi,dimy))
         dNdP = dndp.reshape((dimP,dimPhi,dimy))
-        mean_spin = np.trapz(np.trapz(Py,x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
-        spectra = np.trapz(np.trapz(dNdP,x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
+        mean_spin = np.trapezoid(np.trapezoid(Py,x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
+        spectra = np.trapezoid(np.trapezoid(dNdP,x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
     else:
         print("Midrapidity only!")
         Py = Piyu.reshape((dimP,dimPhi))
         dNdP = dndp.reshape((dimP,dimPhi))
-        mean_spin = np.trapz(Py,x=np.unique(phi),axis=1)
-        spectra = np.trapz(dNdP,x=np.unique(phi),axis=1)
-    
+        mean_spin = np.trapezoid(Py,x=np.unique(phi),axis=1)
+        spectra = np.trapezoid(dNdP,x=np.unique(phi),axis=1)
+
     if(global_integrals):
         return np.unique(pT), -mean_spin, spectra
 
