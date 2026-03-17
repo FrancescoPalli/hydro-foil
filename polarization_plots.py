@@ -216,8 +216,8 @@ def Sz_polarization_pT_pseudo(polarization_file, mass=1.32171, harmonics=2, eta_
         Pzsin = Pizu*np.sin(harmonics*phi) 
         Pz_reahsped = Pzsin.reshape((dimP,dimPhi,dimeta))
         dNdP_reshaped = dndp.reshape((dimP,dimPhi,dimeta))
-        mean_spin = np.trapezoid(np.trapezoid(Pz_reahsped*((pt_vals**2+mass**2)/(np.cosh(eta_vals))),x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
-        spectra = np.trapezoid(np.trapezoid(dNdP_reshaped*((pt_vals**2+mass**2)/(np.cosh(eta_vals))),x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
+        mean_spin = np.trapezoid(np.trapezoid(Pz_reahsped*((pt_vals**2+mass**2)/(np.cosh(eta_vals))),x=np.unique(phi),axis=1),x=np.unique(eta),axis=1)
+        spectra = np.trapezoid(np.trapezoid(dNdP_reshaped*((pt_vals**2+mass**2)/(np.cosh(eta_vals))),x=np.unique(phi),axis=1),x=np.unique(eta),axis=1)
     else:
         print("Midrapidity only!")
         Pzsin = Pizu*np.sin(harmonics*phi) 
