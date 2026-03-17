@@ -175,6 +175,64 @@ def Sz_polarization_pT(polarization_file, mass=1.115683, harmonics=2, rap_cut=1,
 
     return np.unique(pT), pol
 
+def Sz_polarization_pT_pseudo(polarization_file, mass=1.32171, harmonics=2, eta_cut=1, vorticity=False, global_integrals = False):
+    '''
+    Computes the z component of polarization as a function of pT by integrating in phi and eta from the hydro-foil output.
+    If vorticity = True plots only the contribution of the vorticity
+    '''
+    filename =  np.loadtxt(polarization_file, unpack=True)
+    pT = filename[0]
+    phi = filename[1]
+    eta = filename[2]
+    select = (np.abs(eta)<=eta_cut) 
+    pT = pT[select]
+    phi = phi[select]
+    eta = eta[select]
+
+    dndp = filename[3]
+    dndp = dndp[select]
+    dimP=np.size(np.unique(pT))
+    dimPhi=np.size(np.unique(phi))
+    dimeta=np.size(np.unique(eta))
+    Pi0 = filename[4]
+    Pizu = filename[7]
+    if(vorticity):
+        vorticity=False
+    else:
+        Pi0 = Pi0 + filename[8]
+        Pizu = Pizu + filename[11] 
+
+    Pi0 = Pi0[select]
+    Pizu = Pizu[select]
+
+    #BACKBOOST to Xi- RF
+    E = np.sqrt(mass*mass + pT*pT * np.cosh(eta)**2)
+    Pizu = Pizu - Pi0*(pT*np.sinh(eta))/(E+mass)
+    
+    pt_vals = np.unique(pT)[:, None, None]
+    eta_vals = np.unique(eta)[None, None, :]
+
+    if dimeta>1:
+        Pzsin = Pizu*np.sin(harmonics*phi) 
+        Pz_reahsped = Pzsin.reshape((dimP,dimPhi,dimeta))
+        dNdP_reshaped = dndp.reshape((dimP,dimPhi,dimeta))
+        mean_spin = np.trapezoid(np.trapezoid(Pz_reahsped*((pt_vals**2+mass**2)/(np.cosh(eta_vals))),x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
+        spectra = np.trapezoid(np.trapezoid(dNdP_reshaped*((pt_vals**2+mass**2)/(np.cosh(eta_vals))),x=np.unique(phi),axis=1),x=np.unique(y_rap),axis=1)
+    else:
+        print("Midrapidity only!")
+        Pzsin = Pizu*np.sin(harmonics*phi) 
+        Pz_reahsped = Pzsin.reshape((dimP,dimPhi))
+        dNdP_reshaped = dndp.reshape((dimP,dimPhi))
+        mean_spin = np.trapezoid(Pz_reahsped,x=np.unique(phi),axis=1)
+        spectra = np.trapezoid(dNdP_reshaped,x=np.unique(phi),axis=1)
+    
+    if(global_integrals):
+        return np.unique(pT), mean_spin, spectra
+
+    pol = mean_spin/spectra
+
+    return np.unique(pT), pol
+
 def Sj_rapidity_polarization(polarization_file, mass=1.115683, rap_cut=1, pt_cut=10, vorticity=False, global_integrals = False):
     '''
     Computes the component of polarization along J as a function of phi from the particlizationCalc output.
