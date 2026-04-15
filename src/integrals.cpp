@@ -206,7 +206,7 @@ void polarization_linear_new(double pT, double phi, double y_rap, pdg_particle p
         }
     }
     //print to file
-    fileout << "   " << pT << "   " << phi << "   " << Denominator;
+    fileout << "   " << pT << "   " << phi << "   " << y_rap << "   " << Denominator;
     for(int mu=0; mu<4; mu++)
         fileout << "   " << P_vorticity[mu]/ (8.0 * mass) *hbarC; //unit conversion to make the vorticity adimensional
     for(int mu=0; mu<4; mu++)
