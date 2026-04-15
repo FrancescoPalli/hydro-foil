@@ -151,7 +151,7 @@ void polarization_midrapidity_linear(double pT, double phi, pdg_particle particl
 
 }
 
-void polarization_midrapidity_linear_new(double pT, double phi, pdg_particle particle, vector<element> &freeze_out_sup, ofstream &fileout){
+void polarization_linear_new(double pT, double phi, double y_rap, pdg_particle particle, vector<element> &freeze_out_sup, ofstream &fileout){
     double P_vorticity[4] = {0,0,0,0};
     double P_shear[4] = {0,0,0,0};
     double Denominator = 0;
@@ -164,8 +164,8 @@ void polarization_midrapidity_linear_new(double pT, double phi, pdg_particle par
     const int strangeness = particle.get_s();
 
     double mT = sqrt(mass * mass + pT*pT);
-    array<double,4> p = {mT, pT *cos(phi), pT *sin(phi), 0};
-    array<double,4> p_ = {mT, -pT *cos(phi), -pT *sin(phi), 0}; //lower indices    
+    array<double,4> p = {mT *cosh(y_rap), pT *cos(phi), pT *sin(phi), mT *sinh(y_rap)};
+    array<double,4> p_ = {mT *cosh(y_rap), -pT *cos(phi), -pT *sin(phi), -mT *sinh(y_rap)}; //lower indices    
 
     int netpdSigma = 0; // we use this to count the amout of time pdSigma is positive-negative
     int nofcells = 0;
