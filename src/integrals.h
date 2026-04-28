@@ -23,8 +23,10 @@ void polarization_midrapidity(double pT, double phi, pdg_particle particle, vect
 
 //same as the previous function but uses the linear approximation for the vorticity induced polarization. This function is faster.
 void polarization_midrapidity_linear(double pT, double phi, pdg_particle particle, vector<element> &freeze_out_sup, ofstream &fileout);
-//same as the previous but uses the new formula (2509.14301)
-void polarization_midrapidity_linear_new(double pT, double phi, pdg_particle particle, vector<element> &freeze_out_sup, ofstream &fileout);
+//same as the previous but uses the new formula and it is at general rapidity (2509.14301)
+void polarization_linear_new(double pT, double phi, double y_rap, pdg_particle particle, vector<element> &freeze_out_sup, ofstream &fileout);
+
+void polarization_linear_new_modified(double pT, double phi, double y_rap, pdg_particle particle, vector<element> &freeze_out_sup, ofstream &fileout);
 
 //Returns wheter a cell is or is not intersected by the world line
 //bool intersection(const element& ref_cell, const element& cell, const std::array<double,4> momentum);

@@ -1,0 +1,5 @@
+foil
+obj/
+__pycache__/
+*.pyc
+rhic_*/

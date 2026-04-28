@@ -66,14 +66,14 @@ if(!primary_exists){
 			exit(1);
 	 }
 
-	//pdg_particle Lambda(3122);
-	//Lambda.print();
-	pdg_particle Xi_(3312);
-	Xi_.print();
+	pdg_particle Lambda(3122);
+        Lambda.print();
+	//pdg_particle Xi_(3312);
+	//Xi_.print();
 	for(double ipt : pT){
 		for(double iphi : phi){
-			for(double ieta : eta_pseudorap){
-				polarization_exact_pseudorapidity(ipt, iphi, ieta, Xi_, hypersup, fout);
+			for(double iy : y_rap){
+				polarization_linear_new(ipt, iphi, iy, Lambda, hypersup, fout);
 			}
 		}
 	}
